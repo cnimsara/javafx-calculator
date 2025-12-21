@@ -230,12 +230,14 @@ public class MainController {
 	private void handleDecimalPoint() {
 		String text = result.getText();
 		
-		char lastChar = text.charAt(text.length() - 1);
-
 		if(text.isEmpty()) {
 			displayNumber("0.");
-			
-		}else if(lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/'){
+			return;
+		}
+		char lastChar = text.charAt(text.length() - 1);
+
+		
+		if(lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/'){
 			displayNumber("0.");
 		}else if(text.contains(".")) {
 			return;
