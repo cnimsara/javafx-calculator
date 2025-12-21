@@ -236,6 +236,7 @@ public class MainController {
 		}
 		char lastChar = text.charAt(text.length() - 1);
 
+
 		
 		if(lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/'){
 			displayNumber("0.");
