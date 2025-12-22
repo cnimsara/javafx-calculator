@@ -26,6 +26,10 @@ public class Model {
 	        } else {
 	            throw new IllegalArgumentException("Unknown operator: " + operator);
 	        }
+	        
+	        
 	    }
+	 
 
+	 
 }

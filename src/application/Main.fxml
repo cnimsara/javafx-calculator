@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane fx:id="root" onKeyPressed="#handleKeyPressed" prefHeight="440.0" prefWidth="303.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+<Pane fx:id="root" onKeyPressed="#handleKeyPressed" prefHeight="440.0" prefWidth="303.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
    <children>
       <HBox alignment="CENTER" layoutY="158.0" prefHeight="66.0" prefWidth="303.0" spacing="20.0">
          <opaqueInsets>
@@ -36,8 +36,8 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </opaqueInsets>
          <children>
-            <Button mnemonicParsing="false" onAction="#inputOparator" prefHeight="48.0" prefWidth="75.0" text="Clear" />
-            <Button mnemonicParsing="false" onAction="#inputOparator" prefHeight="48.0" prefWidth="75.0" text="Delete" />
+            <Button mnemonicParsing="false" onAction="#inputOparator" prefHeight="48.0" prefWidth="46.0" text="Clear" />
+            <Button mnemonicParsing="false" onAction="#inputOparator" prefHeight="48.0" prefWidth="46.0" text="Delete" />
             <Button mnemonicParsing="false" onAction="#inputOparator" prefHeight="48.0" prefWidth="43.0" text="/" />
          </children>
       </HBox>
@@ -59,7 +59,8 @@
          <children>
             <Button mnemonicParsing="false" onAction="#inputDecimal" prefHeight="48.0" prefWidth="43.0" text="." />
             <Button mnemonicParsing="false" onAction="#inputNumber" prefHeight="48.0" prefWidth="43.0" text="0" />
-            <Button mnemonicParsing="false" onAction="#inputOparator" prefHeight="48.0" prefWidth="105.0" text="=" />
+            <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="43.0" text="( )" />
+            <Button mnemonicParsing="false" onAction="#inputOparator" prefHeight="48.0" prefWidth="41.0" text="=" />
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutY="14.0" prefHeight="42.0" prefWidth="303.0">

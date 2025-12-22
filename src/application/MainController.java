@@ -36,11 +36,7 @@ public class MainController {
 	private void handleKeyPressed(KeyEvent event) {
 		
 		KeyCode code = event.getCode();	
-		
-		if(code.isDigitKey()) {
-			displayNumber(event.getText());
-			return;
-		}
+	
 		
 		 if (code == KeyCode.EQUALS && event.isShiftDown()) {
 		        handleOperator("+");
@@ -51,7 +47,10 @@ public class MainController {
 			    handleOperator("*");
 			    return;
 			}
-	
+		 if(code.isDigitKey()) {
+			    displayNumber(event.getText());
+			    return;
+			}
 		 
 		switch (code) {
         case ADD:
@@ -119,9 +118,7 @@ public class MainController {
 		          operat = value; 
 		          return;
 		    }
-		    double number2 = Double.parseDouble(text);
 
-		    number1 = number2;
 		    operat = value;
 		    start = true;
 
@@ -190,39 +187,69 @@ public class MainController {
 	    
 	 
 	    if (value.equals("=")) {
-	    	
-	    	String text = result.getText();
-	    	
-	    	if(text.isEmpty()) {
-	    		
-	    		return;
-	    		}
-	    	
-	    	char lastChar = text.charAt(text.length() - 1);
-	        if (lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/') {
-	            return;
-	        }
-	        
-	        
-	        try {
-	            String[] parts = result.getText().split("[+\\-*/]");
-	            double number2 = Double.parseDouble(parts[parts.length - 1]);
 
-	            double output = model.calculate(number1, number2, operat);
-	            answer.setText(String.valueOf(output));
+ 	       
+	       ArrayList<String> listOfInput = new ArrayList<String>();
+	       
+	       String number = "";
+	       
+	       for(int i = 0 ; i < result.getText().length(); i++) {
+	    	   char ch = result.getText().charAt(i);
+	    	   
+	    	   
+	    	   if(Character.isDigit(ch) || ch == '.' ) {
+	    		   number = number + ch;
+	    	   }else {
+	    		   listOfInput.add(number);
+	    		   listOfInput.add(String.valueOf(ch));
+	    		   number = "";
+	    	   }
+	       }
+	       
+	       listOfInput.add(number);
+	       
+	       for(int i = 0; i < listOfInput.size(); i++) {
+	    	   String oparator = listOfInput.get(i);
+	    	   
+	    	   if(oparator.equals("*") || oparator.equals("/")) {
+	    		   
+	    		   double number1 = Double.parseDouble(listOfInput.get(i-1));
+	    		   double number2 = Double.parseDouble(listOfInput.get(i+1));
+	    		   
+	    		   double resultsOfNum = model.calculate(number1, number2, oparator);
+	    		   
+	    		   
+	    		   listOfInput.set(i-1, String.valueOf(resultsOfNum));
+	    		   listOfInput.remove(i);
+	    		   listOfInput.remove(i);
+	    		   i--;
+	    	   }
+	    	  
+	    	   }
+	       for (int i = 0; i < listOfInput.size(); i++) {
+   	        String oparator = listOfInput.get(i);
+   	        	if(oparator.equals("+") || oparator.equals("-"))   {
+   		   
+		   		   double number1 = Double.parseDouble(listOfInput.get(i-1));
+		   		   double number2 = Double.parseDouble(listOfInput.get(i+1));
+		   		   
+		   		   double resultsOfNum = model.calculate(number1, number2, oparator);
+		   		   
+		   		   
+		   		   listOfInput.set(i-1, String.valueOf(resultsOfNum));
+		   		   listOfInput.remove(i);
+		   		   listOfInput.remove(i);
+		   		   i--;
+			     	  
+			     }
+	       }
+	      
+	       answer.setText(listOfInput.get(0));
+	       resetCalculatorState();
+	       return;
+	       }
 
-	            resetCalculatorState();
-	        } catch (RuntimeException e) {
-	            answer.setText(e.getMessage());
-	            resetCalculatorState();
-	        }
-	        return;
-	    }
-
-	 
 	    proccesOfNumber(value);
-
-	    
 	}
 	public void inputDecimal(ActionEvent event) {
 		handleDecimalPoint();
@@ -247,3 +274,4 @@ public class MainController {
 	}
 	
 }
+ 
