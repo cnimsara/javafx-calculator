@@ -1,4 +1,4 @@
-package application;
+package application.model;
 
 public class Model {
 	
@@ -29,6 +29,8 @@ public class Model {
 	        
 	        
 	    }
+	 
+	 
 	 
 
 	 

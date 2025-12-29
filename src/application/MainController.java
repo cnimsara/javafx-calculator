@@ -1,7 +1,6 @@
 package application;
 
-import java.util.ArrayList;
-
+import application.model.MathsRule;
 import javafx.event.ActionEvent;
 
 import javafx.fxml.FXML;
@@ -26,9 +25,7 @@ public class MainController {
 	@FXML
 	private Label answer;
 	
-	private Model model = new Model();
-	
- 	
+	private MathsRule mathsRule = new MathsRule();
 	@FXML
 	private Pane root;
 	
@@ -60,6 +57,19 @@ public class MainController {
 		 
 		 if (code == KeyCode.DIGIT8 && event.isShiftDown()) {
 			    handleOperator("*");
+			    return;
+			}
+		 if (code == KeyCode.DIGIT9 && event.isShiftDown()) {
+			    appendWithAutoMultiply("(");
+			    return;
+			}
+		 if (code == KeyCode.DIGIT5 && event.isShiftDown()) {
+			    handleOperator("%");   
+			    return;
+			}
+
+			if (code == KeyCode.DIGIT0 && event.isShiftDown()) {
+			    result.setText(result.getText() + ")");
 			    return;
 			}
 		 if(code.isDigitKey()) {
@@ -218,162 +228,22 @@ public class MainController {
 	    handleOperator(inputButton.getText());
 
 		
-	}
-	
-	
-	private double applyAddSubtract(ArrayList<String> tokens) {
-
-        for (int i = 0; i < tokens.size(); i++) {
-
-            String op = tokens.get(i);
-
-            if (op.equals("+") || op.equals("-")) {
-
-                double left = Double.parseDouble(tokens.get(i - 1));
-                double right = Double.parseDouble(tokens.get(i + 1));
-
-                double result = model.calculate(left, right, op);
-
-                tokens.set(i - 1, String.valueOf(result));
-                tokens.remove(i);
-                tokens.remove(i);
-                i--;
-            }
-        }
-
-        return Double.parseDouble(tokens.get(0));
-    }
+	}   
     
-    private void applyMultiplyDivide(ArrayList<String> tokens) {
-
-        for (int i = 0; i < tokens.size(); i++) {
-
-            String op = tokens.get(i);
-
-            if (op.equals("*") || op.equals("/")) {
-
-                double left = Double.parseDouble(tokens.get(i - 1));
-                double right = Double.parseDouble(tokens.get(i + 1));
-
-                double result = model.calculate(left, right, op);
-
-                tokens.set(i - 1, String.valueOf(result));
-                tokens.remove(i);
-                tokens.remove(i);
-                i--;
-            }
-        }
-    }
-
-    private ArrayList<String> tokenize(String expr) {
-
-        ArrayList<String> tokens = new ArrayList<>();
-        String number = "";
-
-        for (int i = 0; i < expr.length(); i++) {
-            char ch = expr.charAt(i);
-
-             if (ch == '-' && (i == 0 || expr.charAt(i - 1) == '(')) {
-                number += ch;
-                continue;
-            }
-
-            if (Character.isDigit(ch) || ch == '.') {
-                number += ch;
-            } else {
-                if (!number.isEmpty()) {
-                    tokens.add(number);
-                    number = "";
-                }
-                tokens.add(String.valueOf(ch));
-            }
-        }
-
-        if (!number.isEmpty()) {
-            tokens.add(number);
-        }
-
-        return tokens;
-    }
-
-
-
-   
-    private void applyPercentage(ArrayList<String> tokens) {
-
-        for (int i = 0; i < tokens.size(); i++) {
-
-            if (tokens.get(i).equals("%")) {
-
-                double percent = Double.parseDouble(tokens.get(i - 1));
-                double percentValue;
-
-                if (i < 2) {
-                    percentValue = percent / 100;
-                } else {
-                    String prevOperator = tokens.get(i - 2);
-
-                    if (prevOperator.equals("+") || prevOperator.equals("-")) {
-                        double base = Double.parseDouble(tokens.get(i - 3));
-                        percentValue = base * percent / 100;
-                    } else {
-                        percentValue = percent / 100;
-                    }
-                }
-
-                tokens.set(i - 1, String.valueOf(percentValue));
-                tokens.remove(i);
-                i--;
-            }
-        }
-    }
-    
-    private double evaluateWithBrackets(ArrayList<String> tokens) {
-
-        while (tokens.contains("(")) {
-
-            int closeIndex = tokens.indexOf(")");
-            int openIndex = closeIndex;
-
-            while (!tokens.get(openIndex).equals("(")) {
-                openIndex--;
-            }
-
-            ArrayList<String> inner = new ArrayList<>();
-            for (int i = openIndex + 1; i < closeIndex; i++) {
-                inner.add(tokens.get(i));
-            }
-
-            double innerResult = evaluateExpression(inner);
-
-            for (int i = closeIndex; i >= openIndex; i--) {
-                tokens.remove(i);
-            }
-
-            tokens.add(openIndex, String.valueOf(innerResult));
-        }
-
-        return evaluateExpression(tokens);
-    }
-    
-   
-
-
-
     private void appendWithAutoMultiply(String value) {
 
         String text = result.getText();
 
-        if (!text.isEmpty() && value.equals("(")) {
 
+        if (!text.isEmpty()) {
             char lastChar = text.charAt(text.length() - 1);
 
-            boolean lastIsValue =
-                    Character.isDigit(lastChar) ||
-                    lastChar == ')' ||
-                    lastChar == '%';
+            boolean needMultiply =
+                    (lastChar == ')' && (Character.isDigit(value.charAt(0)) || value.equals("("))) ||
+                    (lastChar == '%' && (Character.isDigit(value.charAt(0)) || value.equals("("))) ||
+                    (Character.isDigit(lastChar) && value.equals("("));
 
-            if (lastIsValue) {
+            if (needMultiply) {
                 result.setText(text + "*");
             }
         }
@@ -386,7 +256,8 @@ public class MainController {
     private void toggleSign() {
 
         String text = result.getText();
-        if (text.isEmpty()) return;
+        if (text.isEmpty()) 
+        	return;
 
         int i = text.length() - 1;
 
@@ -434,50 +305,20 @@ public class MainController {
     }
 
 
-    private double evaluateExpression(ArrayList<String> tokens) {
-
-        applyPercentage(tokens);
-        applyMultiplyDivide(tokens);
-         return applyAddSubtract(tokens);
-    }
-    private boolean areBracketsBalanced(String expr) {
-    	int count = 0; 
-    	for (char c : expr.toCharArray()) { 
-    		if (c == '(') count++; 
-    		if (c == ')') count--; 
-    		if (count < 0)
-    			return false; 
-    	} 
-    	
-    	return count == 0; 
-    		
-    }
+ 
+   
+   
     private void liveCalculate() {
-
         try {
-            String expr = result.getText();
-
-            if (expr.isEmpty()) return;
-
-            char last = expr.charAt(expr.length() - 1);
-            if ("+-*/(".indexOf(last) != -1) return;
-
-            if (!areBracketsBalanced(expr)) return;
-
-            ArrayList<String> tokens = tokenize(expr);
-            double value = evaluateExpression(tokens);
-
-            answer.setText(String.valueOf(value));
-
-        } 
-        catch (ArithmeticException e) {
-            answer.setText("Can't Divide by Zero");
+        	 double value = mathsRule.liveCalculateValue(result.getText());
+             answer.setText(String.valueOf(value));
+         } catch (ArithmeticException e) {
+             answer.setText("Can't Divide by Zero");
         }
             catch (Exception e) {
             	
         }
     }
-
 
 	private void handleOperator(String value) {
 
@@ -509,23 +350,20 @@ public class MainController {
 
 	 
 	    if (value.equals("=")) {
-
-	    	try {
- 	       
-	    	  ArrayList<String> tokens = tokenize(result.getText());
-	    	    double finalResult = evaluateWithBrackets(tokens);
-
-	    	    answer.setText(String.valueOf(finalResult));
-	    	}catch (ArithmeticException e) {
-	    		
+	        try {
+	            double finalResult = mathsRule.liveCalculateValue(result.getText());
+	            answer.setText(String.valueOf(finalResult));
+	        } catch (ArithmeticException e) {
+	            answer.setText("Can't Divide by Zero");
+	        } catch (Exception e) {
 	            answer.setText("Error");
 
-	    		
-	    	}
-	    	return;
-
+	        }
+	        return;
+	    }
+ 
 	      
-	}handleOperatorInput(value);}
+	handleOperatorInput(value);}
 	    
 	public void inputDecimal(ActionEvent event) {
 		handleDecimalPoint();
@@ -538,13 +376,21 @@ public class MainController {
 			return;
 		}
 		char lastChar = text.charAt(text.length() - 1);
-
-
 		
 		if(lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/'){
 			displayNumber("0.");
 			return;
 		}
+		 int i = text.length() - 1;
+		    while (i >= 0 &&
+		          (Character.isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
+		        i--;
+		    }
+
+		    String currentNumber = text.substring(i + 1);
+		    if (currentNumber.contains(".")) {
+		        return;
+		    }
 		displayNumber(".");
 	}
 	
