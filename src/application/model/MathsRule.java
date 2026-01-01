@@ -6,43 +6,53 @@ import java.util.ArrayList;
 
 
 public class MathsRule {
-	Model model = new Model();
+	MathematicalOperations mathematicalOperations = new MathematicalOperations();
 	
 	   public double evaluateExpression(ArrayList<String> tokens) {
 
 	    	 applyPercentage(tokens);
+
 	    	 applyMultiplyDivide(tokens);
 	         return   applyAddSubtract(tokens);
 	    } 
 	
-	public void applyPercentage(ArrayList<String> tokens) {
+	   public void applyPercentage(ArrayList<String> tokens) {
 
-        for (int i = 0; i < tokens.size(); i++) {
+		   for (int i = 0; i < tokens.size(); i++) {
 
-            if (tokens.get(i).equals("%")) {
+		        if (tokens.get(i).equals("%")) {
 
-                double percent = Double.parseDouble(tokens.get(i - 1));
-                double percentValue;
+		            double percent = Double.parseDouble(tokens.get(i - 1));
+		            double percentValue;
 
-                if (i < 2) {
-                    percentValue = percent / 100;
-                } else {
-                    String prevOperator = tokens.get(i - 2);
+		            String prevOp = null;
+		            String nextOp = null;
 
-                    if (prevOperator.equals("+") || prevOperator.equals("-")) {
-                        double base = Double.parseDouble(tokens.get(i - 3));
-                        percentValue = base * percent / 100;
-                    } else {
-                        percentValue = percent / 100;
-                    }
-                }
+		            if (i >= 2) {
+		                prevOp = tokens.get(i - 2);
+		            }
 
-                tokens.set(i - 1, String.valueOf(percentValue));
-                tokens.remove(i);
-                i--;
-            }
-        }
-    }
+		            if (i + 1 < tokens.size()) {
+		                nextOp = tokens.get(i + 1);
+		            }
+		          
+ 		        if ("*".equals(nextOp) || "/".equals(nextOp)) {
+		            percentValue = percent / 100;
+		        }
+ 		        else if ("+".equals(prevOp) || "-".equals(prevOp)) {
+		            double base = Double.parseDouble(tokens.get(i - 3));
+		            percentValue = base * percent / 100;
+		        }
+		        else {
+		            percentValue = percent / 100;
+		        }
+
+		        tokens.set(i - 1, String.valueOf(percentValue));
+		        tokens.remove(i);
+		        i--;
+		    }
+		}
+	   }
 	 public double evaluateWithBrackets(ArrayList<String> tokens) {
 
 	        while (tokens.contains("(")) {
@@ -94,7 +104,7 @@ public class MathsRule {
 	                double left = Double.parseDouble(tokens.get(i - 1));
 	                double right = Double.parseDouble(tokens.get(i + 1));
 
-	                double result = model.calculate(left, right, op);
+	                double result = mathematicalOperations.calculate(left, right, op);
 
 	                tokens.set(i - 1, String.valueOf(result));
 	                tokens.remove(i);
@@ -114,7 +124,7 @@ public class MathsRule {
                 double left = Double.parseDouble(tokens.get(i - 1));
                 double right = Double.parseDouble(tokens.get(i + 1));
 
-                double result = model.calculate(left, right, op);
+                double result = mathematicalOperations.calculate(left, right, op);
 
                 tokens.set(i - 1, String.valueOf(result));
                 tokens.remove(i);

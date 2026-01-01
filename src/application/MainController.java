@@ -61,6 +61,7 @@ public class MainController {
 			}
 		 if (code == KeyCode.DIGIT9 && event.isShiftDown()) {
 			    appendWithAutoMultiply("(");
+ 
 			    return;
 			}
 		 if (code == KeyCode.DIGIT5 && event.isShiftDown()) {
@@ -177,9 +178,14 @@ public class MainController {
 	    int openCount = 0;
 	    int closeCount = 0;
 
-	    for (char c : text.toCharArray()) {
-	        if (c == '(') openCount++;
-	        if (c == ')') closeCount++;
+	    for (int i = 0; i < text.length(); i++) {
+	        char c = text.charAt(i);
+
+	        if (c == '(') {
+	            openCount++;
+	        } else if (c == ')') {
+	            closeCount++;
+	        }
 	    }
 
 	    if (openCount == closeCount ||
@@ -190,9 +196,13 @@ public class MainController {
 	        text.endsWith("/")) {
 
 	        appendWithAutoMultiply("(");
+ 
 	    } else {
 	        result.setText(text + ")");
 	    }
+	    
+	    
+	    liveCalculate();
 	}
 
 	public void inputOparator(ActionEvent event) {
@@ -241,14 +251,18 @@ public class MainController {
             boolean needMultiply =
                     (lastChar == ')' && (Character.isDigit(value.charAt(0)) || value.equals("("))) ||
                     (lastChar == '%' && (Character.isDigit(value.charAt(0)) || value.equals("("))) ||
-                    (Character.isDigit(lastChar) && value.equals("("));
+                    ((Character.isDigit(lastChar) || lastChar == '.') && value.equals("("));
 
             if (needMultiply) {
                 result.setText(text + "*");
+                
             }
         }
 
         result.setText(result.getText() + value);
+        
+          
+        
     }
 
 
