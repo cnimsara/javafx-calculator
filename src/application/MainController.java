@@ -388,24 +388,34 @@ public class MainController {
 		if(text.isEmpty()) {
 			displayNumber("0.");
 			return;
-		}
-		char lastChar = text.charAt(text.length() - 1);
-		
-		if(lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/'){
-			displayNumber("0.");
-			return;
-		}
-		 int i = text.length() - 1;
-		    while (i >= 0 &&
-		          (Character.isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
-		        i--;
+		} 
+			char lastChar = text.charAt(text.length() - 1);
+		    if (lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/') {
+				displayNumber("0.");
+				return;
 		    }
+		    if(lastChar == ')' ) {
+				displayNumber("*0.");
+				return;
 
-		    String currentNumber = text.substring(i + 1);
-		    if (currentNumber.contains(".")) {
-		        return;
 		    }
-		displayNumber(".");
+		    int i = text.length() - 1;
+		    
+		    while (i>= 0 && (Character.isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
+		          	
+		    	i--;
+		    }
+		    
+		    String currentNumber = text.substring(i+1);
+		    if(currentNumber.contains(".")) {
+		    	return;
+		    	
+		    }
+		    
+		    displayNumber(".");
+		
+		
+		
 	}
 	
 }
