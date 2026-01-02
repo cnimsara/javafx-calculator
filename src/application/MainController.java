@@ -159,6 +159,23 @@ public class MainController {
 		if(start) {
 			start = false;
 		}
+		String text = result.getText();
+
+	   
+	    if(value.equals("0")) {
+	        int i = text.length() - 1;
+
+ 
+	        while(i >= 0 && (Character.isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
+	            i--;
+	        }
+
+	        String currentNumber = text.substring(i + 1);
+
+	         
+	        if(currentNumber.equals("0")) {
+	            return;  
+	        }}
 		appendWithAutoMultiply(value);
 	    liveCalculate();
 
@@ -390,10 +407,10 @@ public class MainController {
 			return;
 		} 
 			char lastChar = text.charAt(text.length() - 1);
-		    if (lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/') {
-				displayNumber("0.");
-				return;
-		    }
+			 if (lastChar == '+' || lastChar == '-' || lastChar == '*' || lastChar == '/' || lastChar == '(') {
+			        displayNumber("0.");
+			        return;
+			    }
 		    if(lastChar == ')' ) {
 				displayNumber("*0.");
 				return;
